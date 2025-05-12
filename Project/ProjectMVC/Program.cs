@@ -8,6 +8,7 @@ using ProjectMVC.Utils.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddControllers();
 builder.Services.AddDbContext<LeaderboardDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("MainConnection"));
@@ -23,7 +24,6 @@ builder.Services.AddAuthentication().AddCookie(IdentityConstants.ApplicationSche
 builder.Services.AddIdentityCore<User>()
     .AddEntityFrameworkStores<UserApplicationDbContext>();
 
-builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {

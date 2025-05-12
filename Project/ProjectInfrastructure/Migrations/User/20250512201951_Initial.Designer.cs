@@ -9,11 +9,11 @@ using ProjectInfrastructure.Context;
 
 #nullable disable
 
-namespace ProjectInfrastructure.Migrations
+namespace ProjectInfrastructure.Migrations.User
 {
     [DbContext(typeof(UserApplicationDbContext))]
-    [Migration("20250505141258_UserContext")]
-    partial class UserContext
+    [Migration("20250512201951_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -167,14 +167,12 @@ namespace ProjectInfrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId1")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -338,9 +336,7 @@ namespace ProjectInfrastructure.Migrations
                 {
                     b.HasOne("ProjectInfrastructure.Models.User", "User")
                         .WithMany("Leaderboards")
-                        .HasForeignKey("UserId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId1");
 
                     b.Navigation("User");
                 });

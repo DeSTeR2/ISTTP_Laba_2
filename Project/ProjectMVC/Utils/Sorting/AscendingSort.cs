@@ -1,0 +1,27 @@
+using ProjectInfrastructure.Models;
+
+namespace ProjectMVC.Utils.Sorting;
+
+public class AscendingSort(SortingParametr sortingParametr) : SortingStrategy(sortingParametr)
+{
+    public override List<LeaderboardRecordModel> Sort(List<LeaderboardRecordModel> records)
+    {
+        records.Sort((rec1, rec2) =>
+        {
+            int compare = CompareBy(rec1, rec2);
+            if (compare != 0) return compare;
+            
+            return rec1.UpdatedTime.CompareTo(rec2.UpdatedTime);
+        });
+
+        return records;
+    }
+}
+
+public enum SortingParametr
+{
+    Value,
+    Place,
+    UpdatedTime,
+    Name
+}
