@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OData.ModelBuilder;
 using Microsoft.OpenApi.Models;
 using ProjectInfrastructure.Context;
 using ProjectInfrastructure.Models;
@@ -23,6 +25,15 @@ builder.Services.AddAuthentication();
 builder.Services.AddAuthentication().AddCookie(IdentityConstants.ApplicationScheme);
 builder.Services.AddIdentityCore<User>()
     .AddEntityFrameworkStores<UserApplicationDbContext>();
+
+var modelBuilder = new ODataConventionModelBuilder();
+modelBuilder.EntityType<LeaderboardModel>();
+modelBuilder.EntitySet<LeaderboardRecordModel>("Records");
+
+builder.Services.AddControllers().AddOData(
+    options => options.Select().Filter().OrderBy().Expand().Count().SetMaxTop(null).AddRouteComponents(
+        "odata", 
+        modelBuilder.GetEdmModel()));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>

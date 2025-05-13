@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 using Microsoft.EntityFrameworkCore;
 using ProjectInfrastructure.Context;
 using ProjectInfrastructure.Models;
@@ -19,8 +20,7 @@ public class RecordController : Controller
         _leaderboardDbContext = leaderboardDbContext;
     }
 
-    [HttpPatch("update-positions/{leaderboardId}")]
-    public async Task<IActionResult> UpdatePositions(int leaderboardId)
+    private async Task<IActionResult> UpdatePositions(int leaderboardId)
     {
         var leaderboard = await _leaderboardDbContext.FindLeaderboardAsync(leaderboardId);
 
@@ -32,7 +32,7 @@ public class RecordController : Controller
         try
         {
             List<LeaderboardRecordModel> records =
-                new AscendingSort(SortingParametr.Value).Sort(leaderboard.Records.ToList());
+                new DescendingSort(SortingParametr.Value).Sort(leaderboard.Records.ToList());
 
             for (int i = 0; i < records.Count; i++)
             {
@@ -47,7 +47,7 @@ public class RecordController : Controller
         }
     }
 
-    [HttpPatch("update-record")]
+    [HttpPatch("/{leaderboardId}")]
     public async Task<IActionResult> UpdateRecord([FromBody] LeaderboardRecordModel record)
     {
         LeaderboardRecordModel updatedRecord = await FindRecordAsync(record.Id);
@@ -64,8 +64,9 @@ public class RecordController : Controller
         return Ok(updatedRecord);
     }
 
-    [HttpGet("get-records/{leaderboardId}&{strategy}")]
-    public async Task<IActionResult> GetRecords(int leaderboardId, int strategy)
+    [HttpGet("get-records/{leaderboardId}/")]
+    [EnableQuery]
+    public async Task<IActionResult> GetRecords(int leaderboardId, ODataQueryOptions<LeaderboardRecordModel> query)
     {
         var leaderboard = await _leaderboardDbContext.FindLeaderboardAsync(leaderboardId);
 
@@ -75,13 +76,53 @@ public class RecordController : Controller
         }
 
         await UpdatePositions(leaderboardId);
+
+        var records = _leaderboardDbContext.LeaderboardsRecords.AsQueryable();
+        var result = (IQueryable<LeaderboardRecordModel>)query.ApplyTo(records);
         
-        SortingStrategy sortingStrategy = new SortingFactory().GetStrategy(strategy, SortingParametr.Place);
-        leaderboard.Records = sortingStrategy.Sort(leaderboard.Records.ToList());
-        
-        return Ok(leaderboard.Records);
+        return Ok(result);
     }
 
+    [HttpPost("/{id}")]
+    public async Task<IActionResult> AddRecord([FromBody] LeaderboardRecordModel record, int leaderboardId)
+    {
+        record.LeaderboardId = leaderboardId;
+        
+        var leaderboard = await _leaderboardDbContext.FindLeaderboardAsync(record.LeaderboardId);
+        if (leaderboard is null)
+        {
+            return BadRequest(new LeaderboardError().Error(record.LeaderboardId));
+        }
+
+        leaderboard.AddRecord(record);
+        
+        _leaderboardDbContext.LeaderboardsRecords.Add(record);
+        _leaderboardDbContext.Leaderboards.Update(leaderboard);
+        await _leaderboardDbContext.SaveChangesAsync();
+
+        return Ok(leaderboard);
+    }
+    
+    [HttpDelete("records/{recordId}")]
+    public async Task<IActionResult> AddRecord(int recordId)
+    {
+        var record = await _leaderboardDbContext.LeaderboardsRecords.FirstOrDefaultAsync(r => r.Id == recordId);
+        if (record is null)
+        {
+            return BadRequest(new RecordError().Error(recordId));
+        }
+        
+        int leaderboardId = record.LeaderboardId;
+
+        var leaderboard = await _leaderboardDbContext.FindLeaderboardAsync(leaderboardId);
+        leaderboard?.RemoveRecord(record);
+
+        _leaderboardDbContext.Update<LeaderboardModel>(leaderboard);
+        await _leaderboardDbContext.SaveChangesAsync();
+
+        return Ok(leaderboard);
+    }
+    
     private async Task<LeaderboardRecordModel?> FindRecordAsync(int id)
     {
         return await _leaderboardDbContext.LeaderboardsRecords

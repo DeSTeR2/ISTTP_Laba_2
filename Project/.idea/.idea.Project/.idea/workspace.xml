@@ -11,7 +11,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f68c5abe-02dd-401b-b1bd-9c6f8afabb15" name="Changes" comment="" />
+    <list default="true" id="f68c5abe-02dd-401b-b1bd-9c6f8afabb15" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Project/.idea/projectSettingsUpdater.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Project/.idea/projectSettingsUpdater.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Project/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Project/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Project/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Project/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectInfrastructure/ProjectInfrastructure.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectInfrastructure/ProjectInfrastructure.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectMVC/Controllers/LeaderboardsController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectMVC/Controllers/LeaderboardsController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectMVC/Controllers/RecordController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectMVC/Controllers/RecordController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectMVC/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectMVC/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectMVC/ProjectMVC.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectMVC/ProjectMVC.csproj" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -19,6 +28,9 @@
   </component>
   <component name="DpaMonitoringSettings">
     <option name="firstShow" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/45ada8c418664ff394ffd30455aab498c90910/e3/b51e0ce4/IList.cs" root0="SKIP_HIGHLIGHTING" />
@@ -54,9 +66,17 @@
   "keyToString": {
     ".NET Launch Settings Profile.ProjectMVC: http.executor": "Run",
     ".NET Launch Settings Profile.ProjectMVC: https.executor": "Debug",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
-    "settings.editor.selected.configurable": "preferences.pluginManager"
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.ProjectMVC: http">
@@ -66,8 +86,13 @@
       <option name="WORKING_DIRECTORY" value="" />
       <option name="PASS_PARENT_ENVS" value="1" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="ENV_FILE_PATHS" value="" />
+      <option name="REDIRECT_INPUT_PATH" value="" />
+      <option name="PTY_MODE" value="Auto" />
       <option name="USE_MONO" value="0" />
       <option name="RUNTIME_ARGUMENTS" value="" />
+      <option name="AUTO_ATTACH_CHILDREN" value="0" />
+      <option name="MIXED_MODE_DEBUG" value="0" />
       <option name="PROJECT_PATH" value="$PROJECT_DIR$/ProjectInfrastructure/ProjectInfrastructure.csproj" />
       <option name="PROJECT_EXE_PATH_TRACKING" value="1" />
       <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
@@ -182,11 +207,33 @@
       <workItem from="1746977987280" duration="3658000" />
       <workItem from="1747079475409" duration="1453000" />
       <workItem from="1747081117339" duration="5251000" />
+      <workItem from="1747115064221" duration="4079000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.OperationCanceledException" breakIfHandledByOtherCode="false" displayValue="System.OperationCanceledException" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.Threading.Tasks.TaskCanceledException" breakIfHandledByOtherCode="false" displayValue="System.Threading.Tasks.TaskCanceledException" />
+          <option name="timeStamp" value="2" />
+        </breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
+          <option name="timeStamp" value="3" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
