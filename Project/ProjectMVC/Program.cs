@@ -9,32 +9,31 @@ using ProjectMVC.Utils.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add MVC and OData controllers
 builder.Services.AddControllersWithViews();
-builder.Services.AddControllers();
-builder.Services.AddDbContext<LeaderboardDbContext>(options =>
+builder.Services.AddControllers().AddOData(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("MainConnection"));
+    var modelBuilder = new ODataConventionModelBuilder();
+    modelBuilder.EntityType<LeaderboardModel>();
+    modelBuilder.EntitySet<LeaderboardRecordModel>("Records");
+
+    options.Select().Filter().OrderBy().Expand().Count().SetMaxTop(null)
+           .AddRouteComponents("odata", modelBuilder.GetEdmModel());
 });
+
+// Add DB contexts
+builder.Services.AddDbContext<LeaderboardDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MainConnection")));
 
 builder.Services.AddDbContext<UserApplicationDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("MainConnection"));
-});
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MainConnection")));
 
-builder.Services.AddAuthentication();
-builder.Services.AddAuthentication().AddCookie(IdentityConstants.ApplicationScheme);
-builder.Services.AddIdentityCore<User>()
-    .AddEntityFrameworkStores<UserApplicationDbContext>();
+// Configure Identity with your custom User model
+builder.Services.AddIdentity<User, IdentityRole>()
+    .AddEntityFrameworkStores<UserApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
-var modelBuilder = new ODataConventionModelBuilder();
-modelBuilder.EntityType<LeaderboardModel>();
-modelBuilder.EntitySet<LeaderboardRecordModel>("Records");
-
-builder.Services.AddControllers().AddOData(
-    options => options.Select().Filter().OrderBy().Expand().Count().SetMaxTop(null).AddRouteComponents(
-        "odata", 
-        modelBuilder.GetEdmModel()));
-
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -45,9 +44,9 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-    
 var app = builder.Build();
 
+// Apply EF migrations
 app.ApplyMigration<UserApplicationDbContext>();
 app.ApplyMigration<LeaderboardDbContext>();
 
@@ -56,8 +55,7 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
-
-if (app.Environment.IsDevelopment())
+else
 {
     app.UseSwagger();
     app.UseSwaggerUI(options =>
@@ -69,13 +67,14 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication(); // Ensure authentication is active
 app.UseAuthorization();
 
 app.MapStaticAssets();
 
 app.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}")
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
 app.Run();

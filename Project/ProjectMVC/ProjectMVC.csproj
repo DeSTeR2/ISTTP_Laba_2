@@ -37,4 +37,8 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <AdditionalFiles Include="Views\Account\Register.cshtml" />
+    </ItemGroup>
+
 </Project>
