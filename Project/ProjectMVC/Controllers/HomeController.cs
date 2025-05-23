@@ -9,11 +9,13 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly UserManager<User> _userManager;
+    private readonly LeaderboardsController _leaderboardController;
 
-    public HomeController(ILogger<HomeController> logger, UserManager<User> userManager)
+    public HomeController(ILogger<HomeController> logger, UserManager<User> userManager, LeaderboardsController leaderboardController)
     {
         _logger = logger;
         _userManager = userManager;
+        _leaderboardController = leaderboardController;
     }
 
     public async Task<IActionResult> Index()
@@ -21,14 +23,10 @@ public class HomeController : Controller
         var user = await _userManager.GetUserAsync(User);
         if (user is null)
         {
-            return RedirectToAction("Register", "Account");
+            return RedirectToAction("Login", "Account");
         }
-        
-        return View();
-    }
 
-    public IActionResult Privacy()
-    {
+        ViewBag.Leaderboards = _leaderboardController.Get("");
         return View();
     }
 

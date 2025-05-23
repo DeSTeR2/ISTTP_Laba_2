@@ -20,7 +20,7 @@ public class RecordController : Controller
         _leaderboardDbContext = leaderboardDbContext;
     }
 
-    private async Task<IActionResult> UpdatePositions(int leaderboardId)
+    private async Task<IActionResult> UpdatePositions(string leaderboardId)
     {
         var leaderboard = await _leaderboardDbContext.FindLeaderboardAsync(leaderboardId);
 
@@ -66,7 +66,7 @@ public class RecordController : Controller
 
     [HttpGet("get-records/{leaderboardId}/")]
     [EnableQuery]
-    public async Task<IActionResult> GetRecords(int leaderboardId, ODataQueryOptions<LeaderboardRecordModel> query)
+    public async Task<IActionResult> GetRecords(string leaderboardId, ODataQueryOptions<LeaderboardRecordModel> query)
     {
         var leaderboard = await _leaderboardDbContext.FindLeaderboardAsync(leaderboardId);
 
@@ -84,7 +84,7 @@ public class RecordController : Controller
     }
 
     [HttpPost("/{id}")]
-    public async Task<IActionResult> AddRecord([FromBody] LeaderboardRecordModel record, int leaderboardId)
+    public async Task<IActionResult> AddRecord([FromBody] LeaderboardRecordModel record, string leaderboardId)
     {
         record.LeaderboardId = leaderboardId;
         
@@ -104,7 +104,7 @@ public class RecordController : Controller
     }
     
     [HttpDelete("records/{recordId}")]
-    public async Task<IActionResult> AddRecord(int recordId)
+    public async Task<IActionResult> AddRecord(string recordId)
     {
         var record = await _leaderboardDbContext.LeaderboardsRecords.FirstOrDefaultAsync(r => r.Id == recordId);
         if (record is null)
@@ -112,7 +112,7 @@ public class RecordController : Controller
             return BadRequest(new RecordError().Error(recordId));
         }
         
-        int leaderboardId = record.LeaderboardId;
+        string leaderboardId = record.LeaderboardId;
 
         var leaderboard = await _leaderboardDbContext.FindLeaderboardAsync(leaderboardId);
         leaderboard?.RemoveRecord(record);
@@ -123,7 +123,7 @@ public class RecordController : Controller
         return Ok(leaderboard);
     }
     
-    private async Task<LeaderboardRecordModel?> FindRecordAsync(int id)
+    private async Task<LeaderboardRecordModel?> FindRecordAsync(string id)
     {
         return await _leaderboardDbContext.LeaderboardsRecords
             .FirstOrDefaultAsync(r => r.Id == id);

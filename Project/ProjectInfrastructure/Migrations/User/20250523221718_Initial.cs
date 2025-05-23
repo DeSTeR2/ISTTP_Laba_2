@@ -1,8 +1,9 @@
-﻿#nullable disable
-
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace ProjectInfrastructure.Migrations.Leaderboard
+#nullable disable
+
+namespace ProjectInfrastructure.Migrations.User
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -40,18 +41,16 @@ namespace ProjectInfrastructure.Migrations.Leaderboard
                 name: "Leaderboards",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: true),
-                    UserId1 = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Leaderboards", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Leaderboards_User_UserId1",
-                        column: x => x.UserId1,
+                        name: "FK_Leaderboards_User_UserId",
+                        column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "Id");
                 });
@@ -60,13 +59,12 @@ namespace ProjectInfrastructure.Migrations.Leaderboard
                 name: "LeaderboardsRecords",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Place = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     Value = table.Column<int>(type: "int", nullable: false),
                     UpdatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LeaderboardId = table.Column<int>(type: "int", nullable: false)
+                    LeaderboardId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -80,9 +78,9 @@ namespace ProjectInfrastructure.Migrations.Leaderboard
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Leaderboards_UserId1",
+                name: "IX_Leaderboards_UserId",
                 table: "Leaderboards",
-                column: "UserId1");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LeaderboardsRecords_LeaderboardId",

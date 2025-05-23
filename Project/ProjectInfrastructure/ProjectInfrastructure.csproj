@@ -21,6 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Migrations\Leaderboard\" />
       <Folder Include="Migrations\User\" />
     </ItemGroup>
 

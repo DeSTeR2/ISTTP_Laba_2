@@ -21,6 +21,8 @@ builder.Services.AddControllers().AddOData(options =>
            .AddRouteComponents("odata", modelBuilder.GetEdmModel());
 });
 
+
+
 // Add DB contexts
 builder.Services.AddDbContext<LeaderboardDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MainConnection")));
@@ -33,6 +35,8 @@ builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<UserApplicationDbContext>()
     .AddDefaultTokenProviders();
 
+builder.Services.AddControllers().AddControllersAsServices();
+
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -43,6 +47,13 @@ builder.Services.AddSwaggerGen(options =>
         Version = "v1"
     });
 });
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
+
 
 var app = builder.Build();
 

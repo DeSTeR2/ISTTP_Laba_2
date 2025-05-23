@@ -1,16 +1,18 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace ProjectInfrastructure.Models;
 
 public class LeaderboardModel
 {
-    public int Id { get; set; }
+    public string Id { get; set; }
 
     [Length(3, 30)]
     public string? Name { get; set; } = null!;
-    public int? UserId { get; set; }
+    public string? UserId { get; set; } = null!;
+    
+    [JsonIgnore]
     public ICollection<LeaderboardRecordModel>? Records { get; set; }
-    public User? User { get; set; }
 
     public void Update(LeaderboardModel leaderboardModel)
     {

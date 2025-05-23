@@ -13,7 +13,7 @@ public static class Extension
             serviceScope.ServiceProvider.GetRequiredService<TContext>();
     }
 
-    public static async Task<LeaderboardModel?> FindLeaderboardAsync(this LeaderboardDbContext leaderboardDbContext, int id)
+    public static async Task<LeaderboardModel?> FindLeaderboardAsync(this LeaderboardDbContext leaderboardDbContext, string id)
     {
         return await leaderboardDbContext.Leaderboards
             .Include(l => l.Records)

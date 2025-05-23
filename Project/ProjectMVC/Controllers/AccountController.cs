@@ -107,16 +107,14 @@ namespace ProjectMVC.Controllers
             var user = new User
             {
                 Email = model.Email,
-                Leaderboards = new List<LeaderboardModel>(),
-                LeaderboaradIds = new List<int>()
+                UserName = model.Email,
+                LeaderboaradIds = new List<string>()
             };
             
             var result = await _userManager.CreateAsync(user, model.Passworld);
 
-
             if (result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(user, "user");
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 return RedirectToAction("Index", "Home");
             }
@@ -130,7 +128,7 @@ namespace ProjectMVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ProcessButtonClicks()
+        public IActionResult ProcessButtonClicks()
         {
             return RedirectToAction("Index", "Home");
         }

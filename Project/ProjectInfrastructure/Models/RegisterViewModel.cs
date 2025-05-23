@@ -4,16 +4,18 @@ namespace ProjectInfrastructure.Models;
 
 public class RegisterViewModel
 {
-    [Required] [DataType(DataType.EmailAddress)]
-    public string Email;
+    [Required] 
+    [Display(Name = "Email")]
+    [DataType(DataType.EmailAddress)]
+    public string Email { get; set; } = null!;
     
     [Required]
-    [Display(Name = "Passworld")]
+    [Display(Name = "Password")]
     [DataType(DataType.Password)]
     public string Passworld { get; set; } = null!; 
         
     [Required]
-    [Display(Name = "Confirm Passworld")]
+    [Display(Name = "Confirm Password")]
     [DataType(DataType.Password)]
     public string ConfirmationPassworld { get; set; } = null!; 
 }

@@ -1,5 +1,4 @@
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
@@ -11,62 +10,70 @@ using ProjectMVC.Utils.Extensions;
 
 namespace ProjectMVC.Controllers;
 
-
 /*
  /Leaderboards  - all collection
     get - get all    (query)
     post - upload    (body)
     delete - delete all  (query)
     put - replace (body)
- 
-  /Leaderboards/{id} - item 
+
+  /Leaderboards/{id} - item
     get - get by id  (query)
     patch - update by id (body)
     delete - delete by id (query)
-    
+
 
     Records!
     get - /Leaderboards/{id}/{recordId} (query)
-     
+
  */
 
-[Route("api")]
+[Route("leaderboards")]
 [ApiController]
 public class LeaderboardsController : ODataController
 {
     private readonly LeaderboardDbContext _leaderboardDbContext;
+    private readonly UserManager<User> _userManager;
 
-    public LeaderboardsController(LeaderboardDbContext leaderboardDbContext)
+    public LeaderboardsController(LeaderboardDbContext leaderboardDbContext, UserManager<User> userManager)
     {
         _leaderboardDbContext = leaderboardDbContext;
-    }    
-    
+        _userManager = userManager;
+    }
+
     [HttpGet]
     [EnableQuery]
-    public async Task<JsonResult> Get([FromQuery] string? query)
+    public async Task<IActionResult> Get([FromQuery] string? query)
     {
         List<LeaderboardModel?> leaderboards = await _leaderboardDbContext.Leaderboards.ToListAsync();
-        return new JsonResult(leaderboards); 
+        return Ok(leaderboards);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Upload([FromBody] LeaderboardModel? leaderboard)
+    public async Task<IActionResult> Upload([FromBody] LeaderboardModel? leaderboard = null)
     {
         try
         {
-            if (leaderboard.Records != null)
+            var user = await _userManager.GetUserAsync(User);
+            if (string.IsNullOrEmpty(leaderboard?.Name))
             {
-                foreach (var record in leaderboard.Records)
+                Random rng = new Random();
+                if (leaderboard != null)
                 {
-                    record.Leaderboard = leaderboard;
-                    record.Id = leaderboard.Id; 
-                    await _leaderboardDbContext.LeaderboardsRecords.AddAsync(record);
+                    leaderboard.Name = "New leaderboard " + rng.Next(100000);
                 }
+                
+                leaderboard.UserId = user.Id;
             }
 
+            leaderboard.Id = Guid.NewGuid().ToString();
+            
             await _leaderboardDbContext.Leaderboards.AddAsync(leaderboard);
+            
+            user.LeaderboaradIds.Add(leaderboard.Id);
+            
             await _leaderboardDbContext.SaveChangesAsync();
-            return Ok(leaderboard); 
+            return Ok(leaderboard);
         }
         catch (Exception ex)
         {
@@ -82,9 +89,9 @@ public class LeaderboardsController : ODataController
         {
             return BadRequest($"Leaderboard with Id: {leaderboard.Id} is not present in database");
         }
-        
+
         leaderboardInDb.Update(leaderboard);
-        
+
         _leaderboardDbContext.Leaderboards.Update(leaderboardInDb);
         await _leaderboardDbContext.SaveChangesAsync();
 
@@ -92,19 +99,19 @@ public class LeaderboardsController : ODataController
     }
 
     [HttpGet("/{id}")]
-    public async Task<IActionResult> GetLeaderboard(int id)
+    public async Task<IActionResult> GetLeaderboard(string id)
     {
         var leaderboard = await _leaderboardDbContext.FindLeaderboardAsync(id);
         if (leaderboard is null)
         {
             return BadRequest(new LeaderboardError().Error(id));
         }
-        
+
         return Ok(leaderboard);
     }
 
     [HttpDelete("/{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(string id)
     {
         var leaderboard = await _leaderboardDbContext.FindLeaderboardAsync(id);
         if (leaderboard is null)

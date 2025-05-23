@@ -4,13 +4,14 @@ namespace ProjectInfrastructure.Models;
 
 public class LeaderboardRecordModel
 {
-    public int Id { get; set; }
+    public string
+        Id { get; set; }
     public int? Place { get; set; }
     public string? Name { get; set; }
     public int? Value { get; set; }
     public DateTime UpdatedTime { get; set; }
     
-    public int LeaderboardId { get; set; }
+    public string LeaderboardId { get; set; }
     
     [JsonIgnore]
     public LeaderboardModel? Leaderboard { get; set; }

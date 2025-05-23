@@ -1,10 +1,10 @@
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 
 namespace ProjectInfrastructure.Models;
 
-
 public class User : IdentityUser
 {
-    public ICollection<int>? LeaderboaradIds { get; set; }
-    public ICollection<LeaderboardModel>? Leaderboards { get; set; }
+    [JsonIgnore]
+    public ICollection<string>? LeaderboaradIds { get; set; }
 }
