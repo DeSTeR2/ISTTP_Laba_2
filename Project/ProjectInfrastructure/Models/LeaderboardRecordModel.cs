@@ -4,8 +4,7 @@ namespace ProjectInfrastructure.Models;
 
 public class LeaderboardRecordModel
 {
-    public string
-        Id { get; set; }
+    public string? Id { get; set; }
     public int? Place { get; set; }
     public string? Name { get; set; }
     public int? Value { get; set; }
@@ -23,11 +22,7 @@ public class LeaderboardRecordModel
             Name = record.Name;
         }
 
-        if (record.Value != 0)
-        {
-            Value = record.Value;
-        }
-
-        UpdatedTime = record.UpdatedTime;
+        Value = record.Value;
+        UpdatedTime = DateTime.Now;
     }
 }

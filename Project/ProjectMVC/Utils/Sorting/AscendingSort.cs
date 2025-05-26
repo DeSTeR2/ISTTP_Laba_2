@@ -2,7 +2,7 @@ using ProjectInfrastructure.Models;
 
 namespace ProjectMVC.Utils.Sorting;
 
-public class AscendingSort(SortingParametr sortingParametr) : SortingStrategy(sortingParametr)
+public class AscendingSort(SortingParameter sortingParameter) : SortingStrategy(sortingParameter)
 {
     public override List<LeaderboardRecordModel> Sort(List<LeaderboardRecordModel> records)
     {
@@ -16,12 +16,4 @@ public class AscendingSort(SortingParametr sortingParametr) : SortingStrategy(so
 
         return records;
     }
-}
-
-public enum SortingParametr
-{
-    Value,
-    Place,
-    UpdatedTime,
-    Name
 }

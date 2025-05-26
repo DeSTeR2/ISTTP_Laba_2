@@ -2,7 +2,7 @@ using ProjectInfrastructure.Models;
 
 namespace ProjectMVC.Utils.Sorting;
 
-public class DescendingSort(SortingParametr sortingParametr) : SortingStrategy(sortingParametr)
+public class DescendingSort(SortingParameter sortingParameter) : SortingStrategy(sortingParameter)
 {
     public override List<LeaderboardRecordModel> Sort(List<LeaderboardRecordModel> records)
     {

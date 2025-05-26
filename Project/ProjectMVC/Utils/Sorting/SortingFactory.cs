@@ -2,12 +2,17 @@ namespace ProjectMVC.Utils.Sorting;
 
 public class SortingFactory
 {
-    public SortingStrategy GetStrategy(int strategy, SortingParametr sortingParametr)
+    public SortingStrategy GetStrategy(SortingParameter sortBy, SortingType dirrection)
     {
-        if (strategy == 1)
+        switch (dirrection)
         {
-            return new AscendingSort(sortingParametr);
+            case SortingType.Ascending:
+                return new AscendingSort(sortBy);
+            case SortingType.Descending:
+                return new DescendingSort(sortBy);
+            default:
+                throw new Exception($"Now valid sorting type {sortBy}");
         }
-        else return new DescendingSort(sortingParametr);
+        
     }
 }
