@@ -1,0 +1,161 @@
+@model IEnumerable<ProjectInfrastructure.Models.LeaderboardRecordModel>
+
+@{
+    ViewData["Title"] = "Leaderboard Records";
+}
+
+<h2>Leaderboard Records</h2>
+
+<div class="leaderboards-container">
+    @if (!Model.Any())
+    {
+        <p class="no-leaderboards-msg">No leaderboard records found.</p>
+    }
+    else
+    {
+        <form method="get" asp-controller="Record" asp-action="Index">
+            <select name="sortOrder" onchange="this.form.submit()" class="create-leaderboard-btn-inline">
+                <option value="">Sort by...</option>
+                <option value="name">Name</option>
+                <option value="value">Value</option>
+                <option value="place">Place</option>
+                <option value="updated">Updated Time</option>
+            </select>
+        </form>
+
+        @foreach (var record in Model)
+        {
+            <div class="leaderboard-item">
+                <span class="board-name">@record.Name (Value: @record.Value, Place: @record.Place)</span>
+                <a asp-action="Edit" asp-route-id="@record.Id" class="edit-btn">Edit</a>
+            </div>
+        }
+    }
+
+    <a asp-action="Create" class="create-leaderboard-btn-inline">Add New Record</a>
+</div>
+
+<a asp-action="Create" class="create-leaderboard-btn">+</a>
+
+<style>
+    .leaderboards-container {
+        background-color: #1a1a1a;
+        border-radius: 8px;
+        padding: 30px 25px;
+        margin: 40px auto;
+        max-width: 420px;
+        border: 2px solid #333;
+        box-shadow: 0 0 10px #444;
+        color: #ddd;
+        font-family: 'Courier New', monospace;
+        text-align: left;
+    }
+
+    .leaderboard-item {
+        background-color: #0d0d0d;
+        border: 1px solid #555;
+        padding: 10px 15px;
+        border-radius: 6px;
+        margin-bottom: 14px;
+        color: #ddd;
+        font-size: 1rem;
+        cursor: default;
+        transition: background-color 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .leaderboard-item:hover {
+        background-color: #222;
+    }
+
+    .no-leaderboards-msg {
+        font-size: 1.2rem;
+        color: #bbb;
+        text-align: center;
+        margin: 40px 0;
+        font-family: 'Courier New', monospace;
+        text-shadow: 0 0 3px #666;
+    }
+
+    .create-leaderboard-btn-inline {
+        margin-top: 20px;
+        padding: 10px 30px;
+        font-size: 1.1rem;
+        background-color: #222;
+        border: 2px solid #888;
+        color: #ddd;
+        border-radius: 8px;
+        cursor: pointer;
+        width: auto;
+        display: inline-block;
+        text-shadow: 0 0 3px #aaa;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .create-leaderboard-btn-inline:hover {
+        background-color: #333;
+        border-color: #ccc;
+    }
+
+    .create-leaderboard-btn {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        background-color: #222;
+        color: #ddd;
+        border: 2px solid #888;
+        border-radius: 8px;
+        padding: 10px 30px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        box-shadow: 0 0 10px #444;
+        text-shadow: 0 0 3px #aaa;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+        z-index: 1000;
+    }
+
+    .create-leaderboard-btn:hover {
+        background-color: #333;
+        border-color: #ccc;
+    }
+
+    h2 {
+        font-family: 'Courier New', monospace;
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        color: #ddd;
+        text-shadow: 0 0 5px #fff;
+        text-align: center;
+    }
+
+    .board-name {
+        flex-grow: 1;
+        cursor: default;
+    }
+
+    .edit-btn,
+    .save-btn,
+    .cancel-btn,
+    .manage-btn {
+        background-color: #222;
+        border: 2px solid #888;
+        border-radius: 6px;
+        color: #ddd;
+        cursor: pointer;
+        padding: 6px 12px;
+        font-size: 0.9rem;
+        text-shadow: 0 0 3px #aaa;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+        margin-left: 5px;
+    }
+
+    .edit-btn:hover,
+    .save-btn:hover,
+    .cancel-btn:hover,
+    .manage-btn:hover {
+        background-color: #333;
+        border-color: #ccc;
+    }
+</style>

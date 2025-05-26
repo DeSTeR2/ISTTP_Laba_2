@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ using ProjectMVC.Utils.Sorting;
 
 namespace ProjectMVC.Controllers;
 
-[Route("api/[controller]")]
+[Route("records")]
 [ApiController]
 public class RecordController : Controller
 {
@@ -18,6 +19,13 @@ public class RecordController : Controller
     public RecordController(LeaderboardDbContext leaderboardDbContext)
     {
         _leaderboardDbContext = leaderboardDbContext;
+    }
+
+    public IActionResult Index(string leaderboardId)
+    {
+        var records = GetRecords(leaderboardId);
+        ViewBag.Records = JsonSerializer.Serialize(records);
+        return View();
     }
 
     private async Task<IActionResult> UpdatePositions(string leaderboardId)
@@ -47,7 +55,7 @@ public class RecordController : Controller
         }
     }
 
-    [HttpPatch("/{leaderboardId}")]
+    [HttpPatch]
     public async Task<IActionResult> UpdateRecord([FromBody] LeaderboardRecordModel record)
     {
         LeaderboardRecordModel updatedRecord = await FindRecordAsync(record.Id);
@@ -64,9 +72,9 @@ public class RecordController : Controller
         return Ok(updatedRecord);
     }
 
-    [HttpGet("get-records/{leaderboardId}/")]
+    [HttpGet]
     [EnableQuery]
-    public async Task<IActionResult> GetRecords(string leaderboardId, ODataQueryOptions<LeaderboardRecordModel> query)
+    public async Task<IActionResult> GetRecords(string leaderboardId, ODataQueryOptions<LeaderboardRecordModel> query = null)
     {
         var leaderboard = await _leaderboardDbContext.FindLeaderboardAsync(leaderboardId);
 
@@ -102,7 +110,7 @@ public class RecordController : Controller
 
         return Ok(leaderboard);
     }
-    
+
     [HttpDelete("records/{recordId}")]
     public async Task<IActionResult> AddRecord(string recordId)
     {
@@ -122,7 +130,7 @@ public class RecordController : Controller
 
         return Ok(leaderboard);
     }
-    
+
     private async Task<LeaderboardRecordModel?> FindRecordAsync(string id)
     {
         return await _leaderboardDbContext.LeaderboardsRecords

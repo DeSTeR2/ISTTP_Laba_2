@@ -143,9 +143,7 @@
 
 <h2>@ViewData["Title"]</h2>
 
-<div id="leaderboards-container" class="leaderboards-container">
-    <!-- Leaderboards will load here -->
-</div>
+<div id="leaderboards-container" class="leaderboards-container"></div>
 
 <button class="create-leaderboard-btn" onclick="createLeaderboard()">
     Create Leaderboard
@@ -153,134 +151,146 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function() {
-        loadLeaderboards();
+    $(document).ready(function () {
+        const leaderboards = @Html.Raw(ViewBag.Leaderboards ?? "[]");
+        
+        console.log("Leaderboards:", leaderboards); // should log an array
+        console.log("Type of leaderboards:", typeof leaderboards);
+        console.log("Is array:", Array.isArray(leaderboards));
+        console.log("Content:", leaderboards);
+
+        renderLeaderboards(leaderboards);
     });
-    
-    function loadLeaderboards() {
-        $.ajax({
-            url: '/leaderboards',
-            type: 'GET',
-            success: function(leaderboards) {
-                const container = $('#leaderboards-container');
-                container.empty();
-                if (!leaderboards || leaderboards.length === 0) {
-                    container.html(`
-                        <div class="no-leaderboards-msg">
-                            You don’t have any leaderboards
-                            <br />
-                            <button class="create-leaderboard-btn-inline" onclick="createLeaderboard()">
-                                Create Leaderboard
-                            </button>
-                        </div>
-                    `);
-                    return;
-                } 
-                
-                leaderboards.forEach(board => {
-                    container.append(renderLeaderboardItem(board));
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error('Failed to load leaderboards:', error);
-                alert('Failed to load leaderboards');
-            }
-        });
-    }
-    
-    function renderLeaderboardItem(board) {
-        return `
-            <div class="leaderboard-item" data-id="${board.id}">
-                <span class="board-name">${escapeHtml(board.name)}</span>
-                <input class="board-edit-input" type="text" value="${escapeHtml(board.name)}" />
-                <button class="edit-btn" onclick="startEdit(this)">Edit</button>
-                <button class="save-btn" onclick="saveEdit(this)" style="display:none;">Save</button>
-                <button class="cancel-btn" onclick="cancelEdit(this)" style="display:none;">Cancel</button>
-                <button class="manage-btn" onclick="manageLeaderboard(${board.id})">Manage</button>
+
+function renderLeaderboards(leaderboards) {
+    const container = $('#leaderboards-container');
+    container.empty();
+    if (!leaderboards || leaderboards.length === 0) {
+        container.html(`
+            <div class="no-leaderboards-msg">
+                You don’t have any leaderboards
+                <br />
+                <button class="create-leaderboard-btn-inline" onclick="createLeaderboard()">
+                    Create Leaderboard
+                </button>
             </div>
-        `;
-    }
+        `);
+        return;
+    } 
     
-    function escapeHtml(text) {
-        return $('<div>').text(text).html();
-    }
-    
-    function startEdit(button) {
-        const item = $(button).closest('.leaderboard-item');
-        item.find('.board-name').hide();
-        item.find('.board-edit-input').show().focus();
-        item.find('.edit-btn').hide();
-        item.find('.save-btn').show();
-        item.find('.cancel-btn').show();
-    }
-    
-    function cancelEdit(button) {
-        const item = $(button).closest('.leaderboard-item');
-        const input = item.find('.board-edit-input');
-        const nameSpan = item.find('.board-name');
-        input.val(nameSpan.text());
-        input.hide();
-        nameSpan.show();
-        item.find('.edit-btn').show();
-        item.find('.save-btn').hide();
-        item.find('.cancel-btn').hide();
-    }
-    
-    function saveEdit(button) {
-        const item = $(button).closest('.leaderboard-item');
-        const input = item.find('.board-edit-input');
-        const newName = input.val().trim();
-        if (!newName) {
-            alert('Leaderboard name cannot be empty.');
-            return;
+    leaderboards.forEach(board => {
+        container.append(renderLeaderboardItem(board));
+    });
+}
+
+function loadLeaderboards(userId) {
+    $.ajax({
+        url: '/leaderboards',
+        type: 'GET',
+        data: { userId: userId },  // Pass as query string param, not JSON string
+        success: function(leaderboards) {
+            renderLeaderboards(leaderboards);
+        },
+        error: function(xhr, status, error) {
+            console.error('Failed to load leaderboards:', error);
+            alert('Failed to load leaderboards');
         }
-    
-        const id = item.data('id');
-    
-        const updatedLeaderboard = {
-            id: id,
-            name: newName
-        };
-    
-        $.ajax({
-            url: '/leaderboards',
-            type: 'PATCH',
-            contentType: 'application/json',
-            data: JSON.stringify(updatedLeaderboard),
-            success: function(updated) {
-                item.find('.board-name').text(newName);
-                cancelEdit(button); 
-                alert('Leaderboard updated!');
-            },
-            error: function() {
-                alert('Failed to update leaderboard');
-            }
-        });
+    });
+}
+
+
+function manageLeaderboard(id) {
+    var recordIndexUrl = '@Url.Action("Index", "Record")';
+    var url = recordIndexUrl + '?id=' + encodeURIComponent(id);
+    window.location.href = url;
+}
+
+function renderLeaderboardItem(board) {
+    return `
+        <div class="leaderboard-item" data-id="${board.Id}">
+            <span class="board-name">${escapeHtml(board.Name)}</span>
+            <input class="board-edit-input" type="text" value="${escapeHtml(board.Name)}" style="display:none;" />
+            <button class="edit-btn" onclick="startEdit(this)">Edit</button>
+            <button class="save-btn" onclick="saveEdit(this)" style="display:none;">Save</button>
+            <button class="manage-btn" onclick="manageLeaderboard(${board.Id})">Manage</button>
+        </div>
+    `;
+}
+
+function escapeHtml(text) {
+    return $('<div>').text(text).html();
+}
+
+function startEdit(button) {
+    const item = $(button).closest('.leaderboard-item');
+    item.find('.board-name').hide();
+    item.find('.board-edit-input').show().focus();
+    item.find('.edit-btn').hide();
+    item.find('.manage-btn').hide();
+    item.find('.save-btn').show();
+}
+
+function cancelEdit(button) {
+    const item = $(button).closest('.leaderboard-item');
+    const input = item.find('.board-edit-input');
+    const nameSpan = item.find('.board-name');
+    input.val(nameSpan.text());
+    input.hide();
+    nameSpan.show();
+    item.find('.edit-btn').show();
+    item.find('.manage-btn').show();
+    item.find('.save-btn').hide();
+}
+
+function saveEdit(button) {
+    const item = $(button).closest('.leaderboard-item');
+    const input = item.find('.board-edit-input');
+    const newName = input.val().trim();
+    if (!newName) {
+        alert('Leaderboard name cannot be empty.');
+        return;
     }
-    
-    function manageLeaderboard(id) {
-        alert('Manage leaderboard id: ' + id);
-    }
-    
-    function createLeaderboard() {
+
+    const id = item.data('id');
+
+    const updatedLeaderboard = {
+        id: id,
+        name: newName
+    };
+
+    $.ajax({
+        url: '/leaderboards',
+        type: 'PATCH',
+        contentType: 'application/json',
+        data: JSON.stringify(updatedLeaderboard),
+        success: function(updated) {
+            item.find('.board-name').text(newName);
+            cancelEdit(button); 
+            alert('Leaderboard updated!');
+        },
+        error: function() {
+            alert('Failed to update leaderboard');
+        }
+    });
+}
+
+function createLeaderboard() {
     var leaderboard = {
-        Id: "efds"
+        Id: "askljdfhkdsal"
     };
 
     $.ajax({
         url: '/leaderboards',
         type: 'POST',
         contentType: 'application/json',
-        data: JSON.stringify(leaderboard),  // ✅ Correctly stringify the data
+        data: JSON.stringify(leaderboard),
         success: function(created) {
             alert('Leaderboard created!');
-            loadLeaderboards();
+            location.reload();
         },
         error: function(xhr) {
             alert('Failed to create leaderboard\n' + xhr.responseText);
         }
     });
 }
-
-
 </script>

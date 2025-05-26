@@ -1,6 +1,7 @@
 using LibraryWebApplication.Controllers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using ProjectInfrastructure.Context;
 using ProjectInfrastructure.Models;
 
 namespace ProjectMVC.Controllers
@@ -12,11 +13,12 @@ namespace ProjectMVC.Controllers
 
         private static AccountController? _instance;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public AccountController(UserManager<User> userManager,
+            SignInManager<User> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            
+
             _instance = this;
         }
 
@@ -51,7 +53,7 @@ namespace ProjectMVC.Controllers
                     ModelState.AddModelError("", "Wrong password or email");
                 }
             }
-            
+
             return View(model);
         }
 
@@ -95,6 +97,7 @@ namespace ProjectMVC.Controllers
         {
             return View();
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
@@ -110,7 +113,7 @@ namespace ProjectMVC.Controllers
                 UserName = model.Email,
                 LeaderboaradIds = new List<string>()
             };
-            
+
             var result = await _userManager.CreateAsync(user, model.Passworld);
 
             if (result.Succeeded)

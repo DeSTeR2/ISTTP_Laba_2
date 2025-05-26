@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ProjectInfrastructure.Models;
@@ -17,7 +18,6 @@ public class HomeController : Controller
         _userManager = userManager;
         _leaderboardController = leaderboardController;
     }
-
     public async Task<IActionResult> Index()
     {
         var user = await _userManager.GetUserAsync(User);
@@ -26,9 +26,14 @@ public class HomeController : Controller
             return RedirectToAction("Login", "Account");
         }
 
-        ViewBag.Leaderboards = _leaderboardController.Get("");
+        var result = await _leaderboardController.Get(user.Id) as OkObjectResult;
+        var leaderboards = result?.Value;
+        ViewBag.Leaderboards = JsonSerializer.Serialize(leaderboards);
+
         return View();
     }
+
+
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()

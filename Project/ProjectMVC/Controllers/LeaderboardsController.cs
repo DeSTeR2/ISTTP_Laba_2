@@ -43,9 +43,15 @@ public class LeaderboardsController : ODataController
 
     [HttpGet]
     [EnableQuery]
-    public async Task<IActionResult> Get([FromQuery] string? query)
+    public async Task<IActionResult> Get([FromQuery] string? userId)
     {
-        List<LeaderboardModel?> leaderboards = await _leaderboardDbContext.Leaderboards.ToListAsync();
+        List<LeaderboardModel?> leaderboards;
+        if (!string.IsNullOrEmpty(userId))
+        {
+            leaderboards = await _leaderboardDbContext.Leaderboards.Where(l => l.UserId == userId).ToListAsync();
+        } else 
+            leaderboards = await _leaderboardDbContext.Leaderboards.ToListAsync();
+        
         return Ok(leaderboards);
     }
 
@@ -55,31 +61,47 @@ public class LeaderboardsController : ODataController
         try
         {
             var user = await _userManager.GetUserAsync(User);
-            if (string.IsNullOrEmpty(leaderboard?.Name))
+        
+            if (leaderboard == null)
             {
-                Random rng = new Random();
-                if (leaderboard != null)
-                {
-                    leaderboard.Name = "New leaderboard " + rng.Next(100000);
-                }
-                
-                leaderboard.UserId = user.Id;
+                leaderboard = new LeaderboardModel();
             }
 
+            if (string.IsNullOrEmpty(leaderboard.Name))
+            {
+                var rng = new Random();
+                leaderboard.Name = "New leaderboard " + rng.Next(100000);
+            }
+
+            leaderboard.UserId = user.Id;
             leaderboard.Id = Guid.NewGuid().ToString();
-            
+
             await _leaderboardDbContext.Leaderboards.AddAsync(leaderboard);
-            
+
+            if (user.LeaderboaradIds == null)
+            {
+                user.LeaderboaradIds = new List<string>();
+            }
             user.LeaderboaradIds.Add(leaderboard.Id);
-            
+
             await _leaderboardDbContext.SaveChangesAsync();
-            return Ok(leaderboard);
+
+            var leaderboardToReturn = new LeaderboardModel
+            {
+                Id = leaderboard.Id,
+                Records = leaderboard.Records,
+                Name = leaderboard.Name,
+                UserId = leaderboard.UserId
+            };
+
+            return Ok(leaderboardToReturn);
         }
         catch (Exception ex)
         {
-            return BadRequest(ex);
+            return BadRequest(new { error = ex.Message });
         }
     }
+
 
     [HttpPatch]
     public async Task<IActionResult> UpdateLeaderboard([FromBody] LeaderboardModel leaderboard)
