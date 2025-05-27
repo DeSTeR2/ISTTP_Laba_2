@@ -3,8 +3,8 @@
   "WorkspaceRootPath": "D:\\Codes\\Git\\ISTTP_Laba_2\\Project\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{57A02C67-767F-441F-89C9-23D28A530B4C}|ProjectInfrastructure\\ProjectInfrastructure.csproj|d:\\codes\\git\\isttp_laba_2\\project\\projectinfrastructure\\model\\leaderboarddbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{57A02C67-767F-441F-89C9-23D28A530B4C}|ProjectInfrastructure\\ProjectInfrastructure.csproj|solutionrelative:projectinfrastructure\\model\\leaderboarddbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{57A02C67-767F-441F-89C9-23D28A530B4C}|ProjectInfrastructure\\ProjectInfrastructure.csproj|d:\\codes\\git\\isttp_laba_2\\project\\projectinfrastructure\\projectinfrastructure.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{57A02C67-767F-441F-89C9-23D28A530B4C}|ProjectInfrastructure\\ProjectInfrastructure.csproj|solutionrelative:projectinfrastructure\\projectinfrastructure.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     }
   ],
   "DocumentGroupContainers": [
@@ -23,14 +23,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "LeaderboardDbContext.cs",
-              "DocumentMoniker": "D:\\Codes\\Git\\ISTTP_Laba_2\\Project\\ProjectInfrastructure\\Model\\LeaderboardDbContext.cs",
-              "RelativeDocumentMoniker": "ProjectInfrastructure\\Model\\LeaderboardDbContext.cs",
-              "ToolTip": "D:\\Codes\\Git\\ISTTP_Laba_2\\Project\\ProjectInfrastructure\\Model\\LeaderboardDbContext.cs",
-              "RelativeToolTip": "ProjectInfrastructure\\Model\\LeaderboardDbContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-03T17:10:11.143Z",
+              "Title": "ProjectInfrastructure",
+              "DocumentMoniker": "D:\\Codes\\Git\\ISTTP_Laba_2\\Project\\ProjectInfrastructure\\ProjectInfrastructure.csproj",
+              "RelativeDocumentMoniker": "ProjectInfrastructure\\ProjectInfrastructure.csproj",
+              "ToolTip": "D:\\Codes\\Git\\ISTTP_Laba_2\\Project\\ProjectInfrastructure\\ProjectInfrastructure.csproj",
+              "RelativeToolTip": "ProjectInfrastructure\\ProjectInfrastructure.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABwAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-05-27T01:00:48.754Z",
               "EditorCaption": ""
             }
           ]
