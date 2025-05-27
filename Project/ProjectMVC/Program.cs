@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,11 @@ builder.Services.AddControllers().AddOData(options =>
            .AddRouteComponents("odata", modelBuilder.GetEdmModel());
 });
 
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    });
 
 
 // Add DB contexts
@@ -36,7 +42,10 @@ builder.Services.AddIdentity<User, IdentityRole>()
     .AddDefaultTokenProviders();
 
 builder.Services.AddControllers().AddControllersAsServices();
-
+builder.Services.AddControllers()
+    .AddJsonOptions(opt => {
+        opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>

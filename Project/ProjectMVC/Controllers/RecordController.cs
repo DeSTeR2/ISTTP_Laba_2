@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectInfrastructure.Context;
 using ProjectInfrastructure.Models;
+using ProjectMVC.Models;
+using ProjectMVC.Models.Requests;
 using ProjectMVC.Utils.Errors;
 using ProjectMVC.Utils.Extensions;
 using ProjectMVC.Utils.Sorting;
@@ -19,7 +21,7 @@ public class RecordController : Controller
         _leaderboardDbContext = leaderboardDbContext;
     }
 
-    [HttpGet("/Record/Index")]
+    [HttpGet("index")]
     public async Task<IActionResult> Index(string leaderboardId)
     {
         ViewData["LeaderboardId"] = leaderboardId;
@@ -30,44 +32,46 @@ public class RecordController : Controller
             return BadRequest(new LeaderboardError().Error(leaderboardId));
         }
 
-        await UpdatePositions(leaderboardId);
-        var records = leaderboard.Records ?? Enumerable.Empty<LeaderboardRecordModel>();
-
+        var records = UpdatePositions(leaderboardId).Result;
         return View(records);
     }
 
 
-    [HttpPatch]
-    public async Task<IActionResult> UpdatePositions(
-        string leaderboardId,
-        SortingParameter sortBy = SortingParameter.Value,
-        SortingType direction = SortingType.Ascending,
-        int? take = null)
+    private async Task<List<LeaderboardRecordModel>> UpdatePositions(string leaderboardId)
     {
-        var leaderboard = await _leaderboardDbContext.FindLeaderboardAsync(leaderboardId);
+        return await GetSortedRecordsAsync(new UpdatePositionsRequest()
+        {
+            LeaderboardId = leaderboardId,
+            SortBy = SortingParameter.Value,
+            Direction = SortingType.Descending,
+            Take = 10
+        });
+    }
+
+    [HttpPatch]
+    public async Task<IActionResult> UpdatePositions([FromBody] UpdatePositionsRequest request)
+    {
+        if (request == null || string.IsNullOrEmpty(request.LeaderboardId))
+        {
+            return BadRequest(new { errors = new { leaderboardId = new[] { "The leaderboardId field is required." } } });
+        }
+
+        var leaderboard = await _leaderboardDbContext.FindLeaderboardAsync(request.LeaderboardId);
 
         if (leaderboard == null)
         {
-            return BadRequest(new LeaderboardError().Error(leaderboardId));
+            return BadRequest(new LeaderboardError().Error(request.LeaderboardId));
         }
 
         try
         {
-            IEnumerable<LeaderboardRecordModel> records = leaderboard.Records;
-            SortingStrategy sortingStrategy = new SortingFactory().GetStrategy(sortBy, direction);
+            var sortedList = await GetSortedRecordsAsync(request);
 
-            if (take.HasValue)
-            {
-                records = records.Take(take.Value);
-            }
-
-            sortingStrategy.Sort(records.ToList());
-            var sortedList = records.ToList();
             for (int i = 0; i < sortedList.Count; i++)
             {
                 sortedList[i].Place = i + 1;
             }
-            
+
             return Ok(sortedList);
         }
         catch (Exception e)
@@ -75,6 +79,7 @@ public class RecordController : Controller
             return BadRequest(e.Message);
         }
     }
+
 
 
     [HttpPut]
@@ -104,8 +109,8 @@ public class RecordController : Controller
             return BadRequest(new LeaderboardError().Error(leaderboardId));
         }
 
-        await UpdatePositions(leaderboardId);
-        return Ok(leaderboard.Records);
+        var records = UpdatePositions(leaderboardId).Result;
+        return Ok(records);
     }
 
     [HttpPost("{leaderboardId}")]
@@ -126,9 +131,9 @@ public class RecordController : Controller
         _leaderboardDbContext.LeaderboardsRecords.Add(record);
         _leaderboardDbContext.Leaderboards.Update(leaderboard);
         await _leaderboardDbContext.SaveChangesAsync();
-        await UpdatePositions(leaderboardId);
+        var records = UpdatePositions(leaderboardId).Result;
 
-        return Ok(leaderboard);
+        return Ok(records);
     }
 
 
@@ -152,6 +157,33 @@ public class RecordController : Controller
         return Ok(leaderboard);
     }
 
+    private async Task<List<LeaderboardRecordModel>> GetSortedRecordsAsync(UpdatePositionsRequest request)
+    {
+        if (request == null || string.IsNullOrEmpty(request.LeaderboardId))
+            throw new ArgumentException("LeaderboardId is required");
+
+        var leaderboard = await _leaderboardDbContext.FindLeaderboardAsync(request.LeaderboardId);
+
+        if (leaderboard == null)
+            throw new Exception("Leaderboard not found");
+
+        IEnumerable<LeaderboardRecordModel> records = leaderboard.Records;
+
+        SortingStrategy sortingStrategy = new SortingFactory().GetStrategy(request.SortBy, request.Direction);
+
+        var sortedList = records.ToList();
+        sortingStrategy.Sort(sortedList);
+
+        if (request.Take.HasValue)
+            sortedList = sortedList.Take(request.Take.Value).ToList();
+
+        for (int i = 0; i < sortedList.Count; i++)
+            sortedList[i].Place = i + 1;
+
+        return sortedList;
+    }
+
+    
     private async Task<LeaderboardRecordModel?> FindRecordAsync(string id)
     {
         return await _leaderboardDbContext.LeaderboardsRecords

@@ -146,16 +146,15 @@ else
     <form name="sortingForm" onsubmit="sortRecords(event)">
         <input type="hidden" name="leaderboardId" value="@leaderboardId" />
         <select name="sortOrder" class="create-leaderboard-btn-inline">
-            <option value="">Sort by...</option>
+            <option value="Value">Sort by...</option>
             <option value="Value">Value</option>
             <option value="Updated">Updated Time</option>
             <option value="Name">Name</option>
-            <option value="Place">Place</option>
         </select>
 
         <select name="sortDirection" class="create-leaderboard-btn-inline">
-            <option value="Ascending">Ascending</option>
             <option value="Descending">Descending</option>
+            <option value="Ascending">Ascending</option>
         </select>
 
         <input type="number" name="take" placeholder="Number of records" class="create-leaderboard-btn-inline" min="2"/>
@@ -276,22 +275,27 @@ else
         const leaderboardId = form.leaderboardId.value;
         const sortBy = form.sortOrder.value;
         const direction = form.sortDirection.value;
-        const take = form.take.value;
+        const take = form.take.value ? parseInt(form.take.value) : null;
 
-        console.log("Sort By:", sortBy);
-        console.log("Direction:", direction);
-        console.log("Take:", take);
-        console.log("Leaderboard ID:", leaderboardId);
+        var sortingData = ({
+                LeaderboardId: leaderboardId,
+                SortBy: sortBy,
+                Direction: direction,
+                Take: take
+        });
+
+        console.log(sortingData);
 
         $.ajax({
             url: '@(Url.Action("UpdatePositions", "Record"))',
             method: 'PATCH',
-            data: {
-                leaderboardId: leaderboardId,
-                sortBy: sortBy,
-                direction: direction,
-                take: take
-            },
+            contentType: 'application/json',
+            data: JSON.stringify({
+                LeaderboardId: leaderboardId,
+                SortBy: sortBy,
+                Direction: direction,
+                Take: take
+            }),
             success: function (records) {
                 const recordContainer = $('#records-wrapper-id');
                 recordContainer.empty();
@@ -300,8 +304,8 @@ else
                         <div class="leaderboard-item">
                             <span style="display:none;">${record.id}</span>
                             <span class="record-id">№${record.place}</span>
-                            <input type="text" value="${record.name}" readonly />
-                            <input type="number" value="${record.value}" readonly />
+                            <input type="text" class="edit-name" value="${record.name}" readonly />
+                            <input type="number" class="edit-value" value="${record.value}" readonly />
                             <button class="edit-btn">Edit</button>
                             <button class="save-btn" style="display:none;">Save</button>
                         </div>
@@ -315,6 +319,8 @@ else
 
         return false;
     }
+
+
 
 
     function showCreationPanel() {
