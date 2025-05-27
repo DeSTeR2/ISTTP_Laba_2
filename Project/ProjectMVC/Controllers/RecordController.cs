@@ -138,7 +138,7 @@ public class RecordController : Controller
 
 
     [HttpDelete("{recordId}")]
-    public async Task<IActionResult> AddRecord(string recordId)
+    public async Task<IActionResult> DeleteRecord(string recordId)
     {
         var record = await _leaderboardDbContext.LeaderboardsRecords.FirstOrDefaultAsync(r => r.Id == recordId);
         if (record is null)
