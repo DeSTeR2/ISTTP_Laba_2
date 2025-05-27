@@ -277,15 +277,6 @@ else
         const direction = form.sortDirection.value;
         const take = form.take.value ? parseInt(form.take.value) : null;
 
-        var sortingData = ({
-                LeaderboardId: leaderboardId,
-                SortBy: sortBy,
-                Direction: direction,
-                Take: take
-        });
-
-        console.log(sortingData);
-
         $.ajax({
             url: '@(Url.Action("UpdatePositions", "Record"))',
             method: 'PATCH',
